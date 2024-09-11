@@ -42,3 +42,14 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
           
       
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploying
+        run: |
+          eb init --platform docker --region ${{ secrets.AWS_REGION }} your-application-name
+          eb use ${{ secrets.EB_ENV }}
+          eb deploy
