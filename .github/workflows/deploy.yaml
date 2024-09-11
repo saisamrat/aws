@@ -20,3 +20,18 @@ jobs:
 
       - name: build project
         run: gradle clean build --no-daemon
+
+      - name: login to aws
+        id: ecr_login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repository:latest .
+          docker tag your-ecr-repository:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repository:latest
+
+      - name: push to ecr docker
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-ecr-repository:latest
+          
+      
