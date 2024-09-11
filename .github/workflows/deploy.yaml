@@ -43,11 +43,29 @@ jobs:
           
       
 
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: install EB cli
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip python3-dev
+          pip3 install awsebcli --upgrade
+
+      - name: Initialzie EB cli
+        run: |
+          eb init -p docker ${{ secrets.EB_APP_NAME }} --region ${{ secrets.AWS_REGION }}
+
       - name: Deploying
         run: |
           eb init --platform docker --region ${{ secrets.AWS_REGION }} ${{ secrets.EB_APPLICATION }}
