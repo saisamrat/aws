@@ -82,6 +82,3 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy.zip
 
-      - name: Wait for deployment to complete
-        run: |
-          eb status ${{ secrets.EB_ENV }} --region ${{ secrets.AWS_REGION }}
