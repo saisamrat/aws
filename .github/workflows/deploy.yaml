@@ -71,7 +71,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ secrets.EB_APPLICATION }}
           environment_name: ${{ secrets.EB_ENV }}
-          version_label: v-${{ github.run_id }}
+          version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
           bucket_name: ${{ secrets.S3_BUCKET }}
           file: Dockerrun.aws.json
