@@ -49,25 +49,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: aws credentials
-        uses: aws-actions/configure-aws-credentials@v3
+      - name: Generate Dockerrun.aws.json
+        run: |
+          echo '{
+                      "AWSEBDockerrunVersion": "1",
+                      "Image": {
+                        "Name": "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest",
+                        "Update": "true"
+                      },
+                      "Ports": [
+                        {
+                          "ContainerPort": "80"
+                        }
+                      ]
+                    }' > Dockerrun.aws.json
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v18
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ secrets.EB_APP_NAME }}
+          environment_name: ${{ secrets.EB_ENV_NAME }}
+          version_label: v-${{ github.run_id }}
+          region: ${{ secrets.AWS_REGION }}
+          bucket_name: ${{ secrets.S3_BUCKET }}
+          file: Dockerrun.aws.json
 
-      - name: install EB cli
+      - name: Wait for deployment to complete
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y python3-pip python3-dev
-          pip3 install awsebcli --upgrade
-
-      - name: Initialzie EB cli
-        run: |
-          eb init -p docker ${{ secrets.EB_APP_NAME }} --region ${{ secrets.AWS_REGION }}
-
-      - name: Deploying
-        run: |
-          eb init --platform docker --region ${{ secrets.AWS_REGION }} ${{ secrets.EB_APPLICATION }}
-          eb use ${{ secrets.EB_ENV }}
-          eb deploy
+          eb status ${{ secrets.EB_ENV_NAME }} --region ${{ secrets.AWS_REGION }}
