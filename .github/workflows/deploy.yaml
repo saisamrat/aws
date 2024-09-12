@@ -49,6 +49,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Generate Dockerrun.aws.json
         run: |
           echo '{
@@ -64,6 +67,9 @@ jobs:
                   ]
           }' > Dockerrun.aws.json
 
+      - name: Generate deployment package
+        run: zip deploy.zip Dockerrun.aws.json
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v18
         with:
@@ -74,7 +80,7 @@ jobs:
           version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
           bucket_name: ${{ secrets.S3_BUCKET }}
-          file: Dockerrun.aws.json
+          deployment_package: deploy.zip
 
       - name: Wait for deployment to complete
         run: |
