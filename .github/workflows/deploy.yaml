@@ -71,15 +71,15 @@ jobs:
         run: zip deploy.zip Dockerrun.aws.json
 
       - name: Deploy to Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v18
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ secrets.EB_APPLICATION }}
           environment_name: ${{ secrets.EB_ENV }}
           version_label: ${{ github.sha }}
+          use_existing_version_if_available: true
           region: ${{ secrets.AWS_REGION }}
-          bucket_name: ${{ secrets.S3_BUCKET }}
           deployment_package: deploy.zip
 
       - name: Wait for deployment to complete
