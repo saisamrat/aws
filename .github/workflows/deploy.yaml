@@ -24,5 +24,5 @@ jobs:
         run: gradle clean build --no-daemon
 
       - name: load aws creds
-        uses: ./.github/workflows/actions/aws_creds
+        uses: ./.github/workflows/actions/aws-creds
 
