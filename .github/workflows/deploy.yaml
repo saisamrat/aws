@@ -27,5 +27,5 @@ jobs:
         run: chmod +x ./.github/workflows/actions/aws_creds.yml
 
       - name: load aws creds
-        uses: ./.github/workflows/actions/aws_creds.yml
+        uses: ./.github/workflows/actions/aws_creds
 
