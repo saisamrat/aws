@@ -23,6 +23,9 @@ jobs:
       - name: build project
         run: gradle clean build --no-daemon
 
+      - name: Set permissions for yml
+        run: chmod +x ./.github/workflows/actions/aws_creds.yml
+
       - name: load aws creds
         run: ./.github/workflows/actions/aws_creds.yml
 
