@@ -25,4 +25,8 @@ jobs:
 
       - name: load aws creds
         uses: ./.github/workflows/actions/aws-creds
+        env:
+          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
